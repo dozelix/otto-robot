@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" font-family="sans-serif">
+  <rect x="0" y="0" width="900" height="620" fill="#ffffff"/>
+  <text x="20" y="30" font-size="20" font-weight="bold">Otto DIY — Esquema de conexiones (documentativo, sin PCB propia)</text>
+
+  <!-- Shield -->
+  <rect x="330" y="70" width="240" height="420" fill="#f4f6f8" stroke="#333" stroke-width="2" rx="8"/>
+  <text x="350" y="95" font-size="15" font-weight="bold">Nano Shield</text>
+  <text x="350" y="112" font-size="12">Arduino Nano (5V / Vin 7-12V)</text>
+
+  <g font-size="13">
+    <rect x="350" y="130" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="148">D2 S/V/G → Cadera Izq.</text>
+    <rect x="350" y="160" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="178">D3 S/V/G → Cadera Der.</text>
+    <rect x="350" y="190" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="208">D4 S/V/G → Tobillo Izq.</text>
+    <rect x="350" y="220" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="238">D5 S/V/G → Tobillo Der.</text>
+    <rect x="350" y="260" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="278">D8 S → Trig HC-SR04</text>
+    <rect x="350" y="290" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="308">D9 S → Echo HC-SR04</text>
+    <rect x="350" y="320" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="338">D13 S / G → Buzzer +/-</text>
+    <rect x="350" y="360" width="200" height="26" fill="#fff" stroke="#333"/><text x="360" y="378">V / G → HC-SR04 VCC/GND</text>
+    <rect x="350" y="400" width="200" height="26" fill="#fff7e6" stroke="#333"/><text x="360" y="418">Vin/VCC ← (+) vía switch</text>
+    <rect x="350" y="430" width="200" height="26" fill="#fff7e6" stroke="#333"/><text x="360" y="448">GND ← (-) batería</text>
+  </g>
+
+  <!-- Servos left -->
+  <g font-size="13">
+    <rect x="20" y="130" width="240" height="126" fill="#eef6ff" stroke="#333" rx="6"/>
+    <text x="30" y="150" font-weight="bold">4x SG90</text>
+    <text x="30" y="168">Naranja→S, Rojo→V,</text>
+    <text x="30" y="184">Marrón→G</text>
+    <text x="30" y="205">· Cadera Izq. (D2)</text>
+    <text x="30" y="222">· Cadera Der. (D3)</text>
+    <text x="30" y="239">· Tobillo Izq. (D4) / Der. (D5)</text>
+  </g>
+
+  <!-- HC-SR04 -->
+  <rect x="20" y="280" width="240" height="90" fill="#eef6ff" stroke="#333" rx="6"/>
+  <text x="30" y="300" font-size="13" font-weight="bold">HC-SR04</text>
+  <text x="30" y="318" font-size="13">VCC→V, Trig→D8,</text>
+  <text x="30" y="334" font-size="13">Echo→D9, GND→G</text>
+  <text x="30" y="352" font-size="13">Jumper H-H x4</text>
+
+  <!-- Buzzer -->
+  <rect x="20" y="390" width="240" height="70" fill="#eef6ff" stroke="#333" rx="6"/>
+  <text x="30" y="410" font-size="13" font-weight="bold">Buzzer 5V</text>
+  <text x="30" y="428" font-size="13">+ → D13 (S)</text>
+  <text x="30" y="444" font-size="13">- → G</text>
+
+  <!-- Battery -->
+  <rect x="640" y="280" width="240" height="180" fill="#fff7e6" stroke="#333" rx="6"/>
+  <text x="650" y="300" font-size="13" font-weight="bold">Alimentación (Vin 7-12V)</text>
+  <text x="650" y="320" font-size="13">Fuente compatible Nano</text>
+  <rect x="650" y="335" width="220" height="30" fill="#fff" stroke="#333"/>
+  <text x="660" y="355" font-size="13">[ Interruptor ] + en serie</text>
+  <text x="650" y="380" font-size="13">(+) → switch → Vin/VCC</text>
+  <text x="650" y="398" font-size="13">(-) → GND directo</text>
+  <text x="650" y="420" font-size="12">USB: switch abierto (OFF)</text>
+  <text x="650" y="438" font-size="12">Ver Ficha Técnica 01</text>
+
+  <!-- Lines -->
+  <g stroke="#333" stroke-width="1.5">
+    <line x1="260" y1="190" x2="330" y2="190"/>
+    <line x1="260" y1="325" x2="330" y2="295"/>
+    <line x1="260" y1="425" x2="330" y2="333"/>
+    <line x1="570" y1="413" x2="640" y2="380"/>
+    <line x1="570" y1="443" x2="640" y2="398"/>
+  </g>
+
+  <text x="20" y="520" font-size="12">S = señal (naranja/amarillo) · V = 5V (rojo) · G = GND (marrón/negro). Rojo siempre a V.</text>
+  <text x="20" y="540" font-size="12">Previo: centrar servos a 90° con 07-codigo-calibracion. Detalle en docs/05-guia-conexiones.md</text>
+  <text x="20" y="560" font-size="12">Fuente STL y BOM: hardware/stl/ + docs/03. Licencia CC BY-SA, Camilo Parra 2016.</text>
+</svg>
