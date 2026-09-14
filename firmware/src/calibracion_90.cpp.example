@@ -1,0 +1,35 @@
+// Calibración 90° para cuando lleguen los SG90.
+// Uso: renombra este archivo a main.cpp (guarda el autonomo antes) y sube.
+// Deja los 4 servos a 90° para montar horns/patas mecánicamente.
+// Requiere: ESP32Servo (ya en platformio.ini) + fuente externa 5V si hay jitter.
+#include <Arduino.h>
+#include <ESP32Servo.h>
+#include "config.h"
+
+Servo sCI, sCD, sTI, sTD;
+
+void setup() {
+  Serial.begin(115200);
+  ESP32PWM::allocateTimer(0);
+  ESP32PWM::allocateTimer(1);
+  sCI.setPeriodHertz(50); sCD.setPeriodHertz(50);
+  sTI.setPeriodHertz(50); sTD.setPeriodHertz(50);
+  sCI.attach(SERVO_CI, 500, 2400);
+  sCD.attach(SERVO_CD, 500, 2400);
+  sTI.attach(SERVO_TI, 500, 2400);
+  sTD.attach(SERVO_TD, 500, 2400);
+  sCI.write(90 + TRIM_CI);
+  sCD.write(90 + TRIM_CD);
+  sTI.write(90 + TRIM_TI);
+  sTD.write(90 + TRIM_TD);
+  Serial.println("[CAL] 4 servos a 90. Monta mecanica ahora. Reset para repetir.");
+}
+
+void loop() {
+  // Reafirma 90° por si hay deriva
+  sCI.write(90 + TRIM_CI);
+  sCD.write(90 + TRIM_CD);
+  sTI.write(90 + TRIM_TI);
+  sTD.write(90 + TRIM_TD);
+  delay(1000);
+}

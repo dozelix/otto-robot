@@ -1,0 +1,19 @@
+[package]
+name = "otto_esp32"
+version = "0.1.0"
+edition = "2021"
+# Port Rust de firmware/src/main.cpp (Fase 2). Generado con esp-generate --chip esp32.
+# Toolchain: rustup + espup + espflash. No usa PlatformIO.
+
+[dependencies]
+esp-hal = { version = "0.23", features = ["esp32", "unstable"] }
+esp-hal-servo = { version = "0.4", features = ["esp32"] }
+esp-println = { version = "0.13", features = ["esp32", "log"] }
+esp-backtrace = { version = "0.15", features = ["esp32", "println"] }
+embedded-hal = "1.0"
+# Descomentar para async/embassy cuando se portee gait completo:
+# embassy-time = { version = "0.4", features = ["esp32"] }
+# embedded-hal-async = "1.0"
+
+[profile.release]
+opt-level = "s"
