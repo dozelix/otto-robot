@@ -1,82 +1,92 @@
 # 06. Librerías y Entorno
 
-Para programar todas las funciones de **Otto DIY** (movimientos, bailes, gestos y sonidos) utilizando el código estándar desarrollado por la comunidad, necesitas instalar **2 librerías principales**:
+> Placa objetivo: **ESP32-WROOM** (`esp32dev`, Arduino framework) con **PlatformIO**.
+> Referencia Nano/Arduino IDE al final (solo histórica).
 
 ---
 
-## 1. Librerías Necesarias
+## 1. Base ESP32 (PlatformIO, C++)
 
-### 1. OttoDIYLib (Librería Principal)
+### Librería base (única dependencia)
 
-Es la librería central que abstrae la cinemática del robot. Incluye todas las funciones avanzadas como `walk()`, `turn()`, `bend()`, `shakeLeg()`, `sing()` y `getDistance()`.
+| Librería | Uso | Declaración PIO |
+| --- | --- | --- |
+| `madhephaestus/ESP32Servo` | 4x SG90 a 50 Hz (500–2400 µs), timers dedicados | `lib_deps = madhephaestus/ESP32Servo` |
 
-* **Librerías internas que incluye o requiere:**
-* **`Servo.h`**: Viene integrada por defecto en el entorno de Arduino IDE.
-* **`Oscillator.h`**: Controla la generación de ondas senoidales para el movimiento fluido e interconectado de los servomotores.
-* **`US.h`**: Maneja la lectura de distancias en centímetros utilizando el sensor ultrasónico HC-SR04.
+No se usa `OttoDIYLib` en ESP32: es AVR-céntrica y rompe la compilación.
+La marcha (`walk/turn/dance`) es propia en `firmware/src/core/gait.*`
+(parámetros compatibles con `firmware-rust/src/gait.rs`).
 
+El resto (sonar, buzzer, modos, autonomía) es código propio sin deps:
 
+* `core/sonar.*` — HC-SR04 con mediana de 5, timeout 30 ms, rango 2–400 cm.
+* `core/buzzer.*` — `tone()` en GPIO27.
+* `core/autonomy.*` — modos `EXPOSITION/MANUAL` + watchdog 30 s.
+* `core/servo_controller.*` — attach/home/trims.
 
-### 2. US100 (Opcional pero Recomendada)
+### Envs PlatformIO (`firmware/platformio.ini`)
 
-Maneja sensores de ultrasonido alternativos o calibraciones de temporización específicas en los modelos HC-SR04.
+```ini
+[env:otto_esp32]        # base sin red (SIM_SIN_SERVOS=1 por defecto)
+lib_deps = madhephaestus/ESP32Servo
+build_flags = -DSIM_SIN_SERVOS=1 -DENABLE_WIFI_MODULE=0
 
----
+[env:otto_esp32_wifi]   # base + panel WiFi (edita src/wifi_secrets.h)
+lib_deps = madhephaestus/ESP32Servo
+build_flags = -DSIM_SIN_SERVOS=1 -DENABLE_WIFI_MODULE=1
 
-## 2. Método de Instalación
+[env:test_1sg90]        # 1 servo + sonar (mesa)
+```
 
-Existen dos formas de instalarlas en **Arduino IDE**:
+Compilar/subir (VSCode + extensión PlatformIO):
 
-### Opción A: Desde el Gestor de Librerías (Recomendado)
+1. Abre la carpeta `firmware/`.
+2. Abajo a la derecha elige env (`otto_esp32`, `otto_esp32_wifi` o `test_1sg90`).
+3. `Build` → `Upload` → `Monitor` (115200).
+4. Cuando lleguen los 4x SG90: cambia `SIM_SIN_SERVOS` a `0` (en `platformio.ini` o `config.h`).
 
-1. Abre **Arduino IDE**.
-2. Ve al menú superior: **Herramientas** > **Administrar bibliotecas...** (o presiona `Ctrl + Shift + I`).
-3. En el buscador escribe **OttoDIY**.
-4. Selecciona la librería **OttoDIYLib** por *Camilo Parra Palacio / Otto DIY*.
-5. Haz clic en **Instalar** (si te pregunta si deseas instalar todas las dependencias adicionales, selecciona **Instalar todo / Install all**).
+## 2. Módulos extra (solo si `ENABLE_WIFI_MODULE=1`)
 
-### Opción B: Instalación Manual por Archivo .ZIP
+Usan librerías **incluidas en el framework Arduino-ESP32** (sin instalar nada):
 
-Si descargaste las librerías desde el repositorio de GitHub de Otto DIY ([github.com/OttoDIY/OttoDIYLib](https://github.com/OttoDIY/OttoDIYLib)):
+* `WiFi` (solo modo `WIFI_STA`, 2.4 GHz) + `WebServer` (`GET / /status /mode /cmd`).
+* `Update` (solo para OTA futura).
 
-1. En Arduino IDE, ve a **Programa** > **Incluir Librería** > **Añadir biblioteca .ZIP...**
-2. Selecciona el archivo `.zip` descargado.
+Opcional: `ArduinoJson` si se define protocolo JSON (hoy se usa JSON manual).
 
----
+### Política de red: WiFi único
 
-## 3. Estructura Básica en Código (Ejemplo de Prueba)
+* **Solo WiFi 2.4 GHz. Bluetooth/BLE siempre deshabilitado** (comparten banda y tumban el sistema).
+* El módulo llama `esp_bt_controller_mem_release(ESP_BT_MODE_BTDM)` (+ `btStop()` si aplica) antes de `WiFi.begin()`.
+* Si WiFi falla o el módulo está en `0`, la base sigue en `EXPOSITION` local (degradación elegante).
+* Credenciales en `firmware/src/wifi_secrets.h` (red única, no dual).
 
-Una vez instaladas las librerías, la estructura mínima para inicializar a Otto en tu *sketch* de Arduino es la siguiente:
+## 3. Referencia Nano (Arduino IDE, histórica)
+
+Para Arduino Nano clásico (sin WiFi) la comunidad usa:
+
+* `OttoDIYLib` (incluye `Oscillator.h`, `US.h`, requiere `Servo.h`).
+* Instalación: IDE → Herramientas → Administrar bibliotecas → buscar **OttoDIY** → Instalar todo.
+* Pines Nano: servos D2–D5, Trig D8, Echo D9, buzzer D13 (ver [Guía de Conexiones](./05-guia-conexiones.md)).
+
+Ejemplo mínimo Nano (no ESP32):
 
 ```cpp
 #include <Otto.h>
-
-Otto Otto; // Instancia del objeto Otto
-
-// Pines asignados
-#define SERVO_CI 2 // Cadera Izquierda
-#define SERVO_CD 3 // Cadera Derecha
-#define SERVO_TI 4 // Tobillo Izquierdo
-#define SERVO_TD 5 // Tobillo Derecho
-#define BUZZER   13 // Zumbador
-#define TRIG     8  // Ultrasónico Trigger
-#define ECHO     9  // Ultrasónico Echo
-
+Otto Otto;
+#define SERVO_CI 2
+#define SERVO_CD 3
+#define SERVO_TI 4
+#define SERVO_TD 5
+#define BUZZER   13
+#define TRIG     8
+#define ECHO     9
 void setup() {
-  // Inicialización de servos y accesorios
   Otto.init(SERVO_CI, SERVO_CD, SERVO_TI, SERVO_TD, true, BUZZER, TRIG, ECHO);
-  
-  // Sonido de bienvenida y postura inicial
-  Otto.sing(S_connection);
   Otto.home();
 }
-
 void loop() {
-  // Caminar 4 pasos hacia adelante
-  Otto.walk(4, 1000, 1); // (pasos, T_velocidad, dirección: 1 adelante / -1 atrás)
-  
-  // Emitir un sonido alegre
-  Otto.sing(S_happy);
+  Otto.walk(4, 1000, 1);
   delay(1000);
 }
 ```

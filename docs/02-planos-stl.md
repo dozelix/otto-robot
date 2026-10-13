@@ -9,6 +9,8 @@ Archivos oficiales conservados con sus nombres originales `OttoDIY_*_V9` en [`..
 | Pierna | [OttoDIY_Leg_V9.stl](../hardware/stl/OttoDIY_Leg_V9.stl) | x2 | Pierna izquierda y derecha, simétrica (con hueco para cables). |
 | Pie | [OttoDIY_foot_V9.stl](../hardware/stl/OttoDIY_foot_V9.stl) | x2 | Pie izquierdo y derecho, simétrico (aloja el servo del tobillo). |
 
+> **Actualización 2026-10-13:** el `body_V9` recibido mide **69 × 69 × 39 mm** (9 100 triángulos, malla única). El archivo se entrega como **ensamblaje multi-pieza en un único STL** (ver [`FUENTE.md`](../hardware/stl/FUENTE.md)). Si tu laminador lo abre como un bloque, usa “separar objetos” o recupera `head/leg/foot` del historial git.
+
 **Parámetros recomendados de impresión 3D:**
 
 * **Material:** PLA o PETG.

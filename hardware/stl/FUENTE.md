@@ -30,3 +30,10 @@ Archivos oficiales del proyecto Otto DIY, conservados con sus nombres originales
 * Proyecto original Otto DIY por Camilo Parra Palacio (2016).
 * Licencia Creative Commons Atribución — Compartir Igual (CC BY-SA) según publicación original en Thingiverse.
 * Estos archivos se redistribuyen sin modificación, solo por comodidad académica.
+
+## Actualización 2026-10-13 (body V9)
+
+* Archivo recibido: `OttoDIY_body_V9.stl` (binario, 9 100 triángulos).
+* Bounding box medido: **69 × 69 × 39 mm** (X × Y × Z).
+* Malla: **único sólido conectado** (no separado por piezas).
+* Nota del autor del repo: el archivo único contiene **todas las piezas en un solo archivo** (ensamblaje para laminar). Si el laminador lo muestra como un bloque, separar por objetos desconectados o pedir los STL por pieza (`head/leg/foot` originales en historial git).

@@ -1,6 +1,6 @@
 # Otto DIY Robot
 
-Robot bípedo educativo de código abierto basado en **Arduino Nano**, con chasis impreso en 3D, 4 servos SG90, sensor ultrasónico HC-SR04 y buzzer. Proyecto documentado con fines académicos.
+Robot bípedo educativo de código abierto basado en **ESP32-WROOM** (migración desde Arduino Nano), con chasis impreso en 3D, 4 servos SG90, sensor ultrasónico HC-SR04 y buzzer. Proyecto documentado con fines académicos.
 
 Documentación completa en [`docs/index.md`](docs/index.md).
 
@@ -9,32 +9,36 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 ### Hardware y diseño
 
 1. [Ficha Técnica](docs/01-ficha-tecnica.md) — Microcontrolador, actuadores, sensores, alimentación y entorno.
-2. [Planos STL](docs/02-planos-stl.md) — 5 piezas para impresión 3D y parámetros recomendados.
+2. [Planos STL](docs/02-planos-stl.md) — Body V9 69×69×39 mm (multi-pieza en único archivo) y parámetros recomendados.
 3. [Lista de Materiales (BOM)](docs/03-lista-materiales-bom.md) — Electrónica y tornillería.
 4. [Ficha Descriptiva](docs/04-ficha-descriptiva.md) — Cómo, cuándo, por qué y dónde del proyecto.
-5. [Guía de Conexiones](docs/05-guia-conexiones.md) — Mapeo de pines, alimentación e interruptor.
+5. [Guía de Conexiones](docs/05-guia-conexiones.md) — Mapeo de pines Nano; ESP32 en [Migración ESP32](docs/11-migracion-esp32.md).
 
 ### Software y puesta en marcha
 
-6. [Librerías y Entorno](docs/06-librerias.md) — Instalación de `OttoDIYLib` y ejemplo mínimo.
+6. [Librerías y Entorno](docs/06-librerias.md) — PlatformIO + `ESP32Servo`, política WiFi único.
 7. [Código de Calibración](docs/07-codigo-calibracion.md) — Centrado de servos a 90°.
-8. [Firmware Autónomo](docs/08-firmware-autonomo.md) — *Pendiente:* comportamiento autónomo.
+8. [Firmware Autónomo](docs/08-firmware-autonomo.md) — Base SDD + modos exposición/manual.
 9. [Manual de Ensamblaje](docs/09-manual-ensamblaje.md) — *Pendiente:* montaje mecánico paso a paso (texto).
 10. [Calibración y Troubleshooting](docs/10-calibracion-troubleshooting.md) — *Pendiente:* trimming y solución de problemas.
+11. [Migración ESP32](docs/11-migracion-esp32.md) — Cableado actual, divisor Echo, orden de encendido.
+12. [Arquitectura y Módulos](docs/12-arquitectura-modulos.md) — Base vs extras + flags.
 
 ## Estado del proyecto
 
 | Sección | Estado |
 | --- | --- |
 | Ficha técnica, planos, BOM, ficha descriptiva | Completado |
-| Conexiones, librerías, calibración | Completado |
-| Firmware autónomo, ensamblaje, troubleshooting | Pendiente |
+| Conexiones, librerías, calibración, migración ESP32, arquitectura | Completado |
+| Firmware autónomo (base + modos) | En progreso |
+| Ensamblaje, troubleshooting | Pendiente |
 
-## Inicio rápido
+## Inicio rápido (ESP32 + PlatformIO)
 
 1. Revisa la [Ficha Técnica](docs/01-ficha-tecnica.md) y la [Lista de Materiales](docs/03-lista-materiales-bom.md).
-2. Conecta según la [Guía de Conexiones](docs/05-guia-conexiones.md).
-3. Instala las [Librerías](docs/06-librerias.md) y sube el [Código de Calibración](docs/07-codigo-calibracion.md) para dejar los servos a 90° antes del montaje.
+2. Conecta según [Migración ESP32](docs/11-migracion-esp32.md) (TRIG 18, ECHO 19 con divisor, buzzer 27, servos 32/33/25/26).
+3. Abre `firmware/` en VSCode + PlatformIO. Envs: `otto_esp32` (base), `otto_esp32_wifi` (panel), `test_1sg90` (mesa).
+4. Para modos por red: edita `firmware/src/wifi_secrets.h` (red 2.4 GHz única, sin BT) y sube `otto_esp32_wifi`.
 
 ## Estructura del repositorio
 
@@ -45,14 +49,19 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 ├── LICENSE
 ├── hardware/
 │   ├── stl/
-│   │   ├── OttoDIY_head_V9.stl
-│   │   ├── OttoDIY_body_V9.stl
-│   │   ├── OttoDIY_Leg_V9.stl
-│   │   ├── OttoDIY_foot_V9.stl
+│   │   ├── OttoDIY_body_V9.stl   # 69x69x39 mm, multi-pieza en único archivo (2026-10-13)
 │   │   └── FUENTE.md
 │   └── esquemas/
 │       ├── esquema-conexiones.md
 │       └── esquema-conexiones.svg
+├── firmware/
+│   ├── platformio.ini            # otto_esp32 / otto_esp32_wifi / test_1sg90 / test_core_esp32
+│   ├── test/test_core/           # Unity en placa (headers puros)
+│   └── src/
+│       ├── config.h / wifi_secrets.h / main.cpp / test_1sg90.cpp
+│       ├── core/                 # base: servo, sonar(+filter), buzzer, gait(+params), autonomy, modes, validate
+│       └── modules/              # extras: net_wifi (solo WiFi 2.4 GHz, sin BT)
+├── tests/                        # suite Python: python tests/run_tests.py (49 tests)
 └── docs/
     ├── index.md
     ├── 01-ficha-tecnica.md
@@ -64,7 +73,9 @@ Documentación completa en [`docs/index.md`](docs/index.md).
     ├── 07-codigo-calibracion.md
     ├── 08-firmware-autonomo.md
     ├── 09-manual-ensamblaje.md
-    └── 10-calibracion-troubleshooting.md
+    ├── 10-calibracion-troubleshooting.md
+    ├── 11-migracion-esp32.md
+    └── 12-arquitectura-modulos.md
 ```
 
 ## Contribución
