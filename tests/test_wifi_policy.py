@@ -47,6 +47,14 @@ class TestWifiPolicy(unittest.TestCase):
         self.assertIn("send(409", self.cpp)
         self.assertIn("OttoMode::MANUAL", self.cpp)
 
+    def test_panel_mobile_first(self):
+        # IoT controlado desde el teléfono: viewport completo, sin
+        # zoom por doble-tap, targets táctiles >= 48 px, D-pad en grilla.
+        for token in ("viewport-fit=cover", "touch-action:manipulation",
+                      "min-height:54px", "grid-template-columns",
+                      "max-width:520px"):
+            self.assertIn(token, self.cpp, token)
+
 
 if __name__ == "__main__":
     unittest.main()

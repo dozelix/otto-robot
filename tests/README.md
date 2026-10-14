@@ -12,7 +12,7 @@ para poder probarse en host y en placa. Las rutas canónicas están en
 python tests/run_tests.py
 ```
 
-52 tests, solo stdlib (Python 3.7+). Verifican:
+53 tests, solo stdlib (Python 3.7+). Verifican:
 
 | Archivo | Qué cubre |
 | --- | --- |
@@ -21,7 +21,7 @@ python tests/run_tests.py
 | `test_gait_params.py` | Fases walk/turn, simetría, ángulos en 0–180°, paridad con `firmware-rust` |
 | `test_validate.py` | Bordes steps/T/dir/beep, `shouldAvoid/SafeHome/Watchdog` (incl. overflow `millis`) |
 | `test_sonar_filter.py` | Conversión us→cm, mediana anti-outliers, bordes 2/400 cm |
-| `test_wifi_policy.py` | `core/net` siempre presente, BT deshabilitado, sin BLE/AP, una red, endpoints, gate 409 |
+| `test_wifi_policy.py` | `core/net` siempre presente, BT deshabilitado, sin BLE/AP, una red, endpoints, gate 409, panel mobile-first |
 | `test_structure.py` | Árbol `core/` por directorios, envs PIO, `build_src_filter` vigente, sin `OttoDIYLib`, runner Unity |
 
 Los mirrors Python de `validate`/`sonar_filter`/`gait`/`modes` son la spec

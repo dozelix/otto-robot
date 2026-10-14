@@ -5,15 +5,16 @@
 
 ## 1. Alcance de la base
 
-Incluye (sin red):
+Incluye:
 
-1. Init hardware: 4x SG90 (o `[SIM]` sin servos), buzzer GPIO27, HC-SR04 (TRIG 18 / ECHO 19 con divisor).
+1. Init hardware: 4x SG90 (o `[SIM]` sin servos), HC-SR04 (TRIG 18 / ECHO 19 con divisor), buzzer opcional GPIO27.
 2. Sensor: mediana de 5, timeout 30 ms, rango 2–400 cm, `-1` = inválido.
 3. Actuación: `home()`, `stand()`, `walk(steps,T,dir)`, `turn(steps,T,dir)`, `danceBasic()`.
 4. Autonomía + modos `EXPOSITION/MANUAL` con watchdog.
-5. Logs Serial 115200 (`[Otto]`, `[SIM]`, `dist: X cm`).
+5. WiFi + dashboard mobile-first (red única 2.4 GHz, sin BT).
+6. Logs Serial 115200 (`[Otto]`, `[SIM]`, `dist: X cm`).
 
-Excluye (módulos extra): WiFi/OTA, melodías avanzadas, LEDs/accesorios, telemetría, port Rust.
+Excluye: OTA, melodías avanzadas, LEDs/accesorios, telemetría, port Rust.
 
 ## 2. Máquina de estados
 
@@ -30,7 +31,7 @@ MANUAL:
 
 Defaults (`config.h`): `UMBRAL=20 cm`, `T=1000 ms`, `PERIODO=200 ms`, `FILTRO=5`.
 
-## 3. Modos (cambiables por WiFi extra o Serial)
+## 3. Modos (cambiables por panel WiFi o Serial)
 
 | Modo | Comportamiento | Comandos |
 | --- | --- | --- |
@@ -50,34 +51,53 @@ bool manualDance();
 
 Serial (115200): `w/s/a/d/h/b` = mover en manual, `m/e` = manual/exposición, `?` = ayuda.
 
-## 4. Módulo WiFi extra (`ENABLE_WIFI_MODULE=1`)
+## 4. WiFi + dashboard (`core/net`, siempre presente)
 
-Panel en `http://<ip>/` + API:
+Red única 2.4 GHz en `firmware/src/wifi_secrets.h`, BT/BLE deshabilitado.
+Si WiFi no conecta, la base sigue local en exposición.
 
-* `GET /status` → `{"mode":"exposition","dist":34.5,"sim":1,"ip":"..."}`.
-* `GET /mode?m=exposition|manual` → cambia de modo.
-* `GET /cmd?a=walk&steps=2&T=1000` (`walk|back|turnL|turnR|home|dance|beep`).
-  En `exposition` devuelve `409` (pasa a manual primero).
+### 4.1 Panel mobile-first (`GET /`)
 
-Si WiFi falla, la base sigue local en exposición.
+El robot se maneja desde el teléfono. Specs de la página (servida inline
+desde la ESP32, ~2.5 KB, sin dependencias externas):
+
+* Viewport `width=device-width, initial-scale=1, viewport-fit=cover`.
+* `touch-action: manipulation` (sin retardo táctil ni zoom por doble-tap).
+* Layout de una columna, ancho máx. 520 px.
+* Targets táctiles: botones ≥ 54 px, D-pad en grilla 3×3 de 60 px (▲◀■▶▼).
+* Selector de modo segmentado con estado activo; badge de modo + distancia
+  en grande; pad deshabilitado fuera de `manual` (avisa antes de pedir `/cmd`).
+* Polling de `/status` cada 2 s; sin conexión muestra aviso, no se cuelga.
+
+### 4.2 API
+
+* `GET /status` → `200 application/json`
+  `{"mode":"exposition","dist":34.5,"sim":1,"ip":"192.168.1.50"}`.
+  `dist` en cm (`-1` = inválida), `sim` = 1 sin servos.
+* `GET /mode?m=exposition|manual` → `200` + status. Sin `m` → `400`.
+  Acepta `m/M/1` = manual, resto = exposition.
+* `GET /cmd?a=walk&steps=2&T=1000` (`walk|back|turnL|turnR|home|dance|beep`)
+  → `200` + status. En `exposition` → `409`. Acción inválida o fuera de
+  límites (`steps` 1–4, `T` 500–2000 ms, beep 100–5000 Hz/20–1000 ms) → `400`.
 
 ## 5. Envs y puesta en marcha
 
 ```text
-env:otto_esp32      base sin red (desarrollo diario)
-env:otto_esp32_wifi base + panel (edita src/wifi_secrets.h, red 2.4 GHz)
-env:test_1sg90      1 servo + sonar (mesa)
+env:otto_esp32       producción (WiFi + panel siempre; SIM=1 sin servos)
+env:manual_1sg90     banco: 1 servo + sonar (mesa)
+env:calibracion_90   banco: 4 servos a 90° (montaje mecánico)
+env:test_core_esp32  Unity en placa · env:native Unity en PC
 ```
 
-1. Sube `test_1sg90`, verifica `dist` + centro 90°.
+1. Sube `manual_1sg90`, verifica `dist` + centro 90°.
 2. Sube `otto_esp32` (`SIM=1`): acerca la mano <20 cm → `[SIM] giro + beep`.
 3. Con 4x SG90 + fuente 5V 2A (GND común): pon `SIM=0`, recalibra a 90°, prueba `walk`.
-4. Para modos por red: sube `otto_esp32_wifi`, abre `http://<ip>/`.
+4. Con WiFi conectado (edita `src/wifi_secrets.h`, red 2.4 GHz): abre `http://<ip>/` desde el teléfono.
 
 ## Referencias
 
 * [Librerías y Entorno](./06-librerias.md) — deps y política WiFi único.
-* [Arquitectura y Módulos](./12-arquitectura-modulos.md) — base vs extras + flags.
+* [Arquitectura y Módulos](./12-arquitectura-modulos.md) — árbol por directorios y reglas.
 * [Guía de Conexiones](./05-guia-conexiones.md) — Nano; ESP32 en [Migración ESP32](./11-migracion-esp32.md).
 * [Calibración y Troubleshooting](./10-calibracion-troubleshooting.md) — trims.
 

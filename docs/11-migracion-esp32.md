@@ -33,13 +33,13 @@ Sin divisor puedes probar 10-20s para ver números, no lo dejes fijo.
 ## Orden de encendido seguro
 
 1. USB al PC (lógica) con fuente externa apagada.
-2. Sube `env:test_1sg90`, abre Monitor 115200.
+2. Sube `env:manual_1sg90`, abre Monitor 115200.
 3. Enciende fuente externa del servo.
 4. Debe centrar a 90° 2s, luego `dist + nudge 75/105°`.
 5. Para subir de nuevo, apaga fuente externa o quita S si usas D2.
 
 ## WiFi único (sin Bluetooth)
 
-* Base (`env:otto_esp32`) compila sin red. Extra (`env:otto_esp32_wifi`) usa **solo WiFi STA 2.4 GHz** (una red en `src/wifi_secrets.h`).
+* `env:otto_esp32` trae WiFi + dashboard siempre: **solo WiFi STA 2.4 GHz** (una red en `src/wifi_secrets.h`).
 * **BT/BLE siempre deshabilitado** (`esp_bt_controller_mem_release` + `btStop()` si aplica): WiFi+BT comparten 2.4 GHz y tumban el sistema.
 * Si WiFi falla, la base sigue en `EXPOSITION` local. Ver [Librerías](./06-librerias.md) y [Arquitectura](./12-arquitectura-modulos.md).

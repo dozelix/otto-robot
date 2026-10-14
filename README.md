@@ -22,7 +22,7 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 9. [Manual de Ensamblaje](docs/09-manual-ensamblaje.md) — *Pendiente:* montaje mecánico paso a paso (texto).
 10. [Calibración y Troubleshooting](docs/10-calibracion-troubleshooting.md) — *Pendiente:* trimming y solución de problemas.
 11. [Migración ESP32](docs/11-migracion-esp32.md) — Cableado actual, divisor Echo, orden de encendido.
-12. [Arquitectura y Módulos](docs/12-arquitectura-modulos.md) — Base vs extras + flags.
+12. [Arquitectura y Módulos](docs/12-arquitectura-modulos.md) — Árbol por directorios y reglas.
 
 ## Estado del proyecto
 
@@ -37,8 +37,8 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 
 1. Revisa la [Ficha Técnica](docs/01-ficha-tecnica.md) y la [Lista de Materiales](docs/03-lista-materiales-bom.md).
 2. Conecta según [Migración ESP32](docs/11-migracion-esp32.md) (TRIG 18, ECHO 19 con divisor, buzzer 27, servos 32/33/25/26).
-3. Abre `firmware/` en VSCode + PlatformIO. Envs: `otto_esp32` (base), `otto_esp32_wifi` (panel), `test_1sg90` (mesa).
-4. Para modos por red: edita `firmware/src/wifi_secrets.h` (red 2.4 GHz única, sin BT) y sube `otto_esp32_wifi`.
+3. Abre la raíz del repo en VSCode + PlatformIO. Envs: `otto_esp32` (producción con panel), `manual_1sg90` / `calibracion_90` (banco).
+4. Para el panel: edita `firmware/src/wifi_secrets.h` (red 2.4 GHz única, sin BT), sube `otto_esp32` y abre `http://<ip>/` desde el teléfono.
 
 ## Estructura del repositorio
 
@@ -63,7 +63,7 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 │       ├── modules/              # buzzer (opcional vía sound_hook)
 │       └── tools/                # manual_1sg90 + calibracion_90 (banco)
 ├── platformio.ini                # envs en raíz (src_dir/test_dir); build_src_filter vigente
-├── tests/                        # suite Python: python tests/run_tests.py (52 tests)
+├── tests/                        # suite Python: python tests/run_tests.py (53 tests)
 └── docs/
     ├── index.md
     ├── 01-ficha-tecnica.md

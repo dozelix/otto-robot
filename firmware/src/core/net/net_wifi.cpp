@@ -34,25 +34,81 @@ static String statusJson() {
 }
 
 static const char HTML_PAGE[] PROGMEM = R"HTML(
-<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>Otto-bot</title><style>body{font-family:system-ui;margin:16px}button{padding:10px 14px;margin:4px;font-size:16px}a{text-decoration:none}</style></head>
-<body><h2>Otto-bot</h2>
-<p>Modo: <b id=m>-</b></p>
-<p><button onclick="setMode('exposition')">Exposicion (baila+sensor)</button>
-<button onclick="setMode('manual')">Manual</button></p>
-<h3>Pad manual (solo en manual)</h3>
-<p><button onclick="cmd('walk')">Adelante</button>
-<button onclick="cmd('back')">Atras</button>
-<button onclick="cmd('turnL')">Girar izq</button>
-<button onclick="cmd('turnR')">Girar der</button></p>
-<p><button onclick="cmd('home')">Home</button>
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Otto-bot</title>
+<style>
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:system-ui,sans-serif;margin:0 auto;padding:12px;max-width:520px;
+touch-action:manipulation;background:#101418;color:#e8ecef}
+h1{font-size:1.25rem;margin:.3em 0}
+.card{background:#1a2129;border:1px solid #2c3640;border-radius:14px;padding:12px;margin:10px 0}
+.row{display:flex;gap:8px}
+button{flex:1;min-height:54px;font-size:1.05rem;border-radius:12px;border:1px solid #3a4653;
+background:#232c36;color:#e8ecef;cursor:pointer}
+button:active{transform:scale(.97)}
+button.on{background:#2e7d32;border-color:#2e7d32;color:#fff}
+button:disabled{opacity:.35}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;background:#2e7d32;color:#fff;font-size:.85rem}
+.badge.manual{background:#b26a00}
+.dist{font-size:2rem;font-weight:700;margin:.1em 0}
+.small{font-size:.85rem;color:#9aa7b2}
+.pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0}
+.pad button{min-height:60px;font-size:1.4rem}
+.msg{min-height:1.4em;font-size:.9rem;color:#9aa7b2}
+</style></head>
+<body>
+<h1>&#129302; Otto-bot</h1>
+<div class="card">
+<div class="row">
+<button id="bExpo" onclick="setMode('exposition')">Exposici&oacute;n</button>
+<button id="bMan" onclick="setMode('manual')">Manual</button>
+</div>
+<p class="msg">Exposici&oacute;n: baila solo + evita obst&aacute;culos. Manual: mando desde aqu&iacute;.</p>
+</div>
+<div class="card">
+<span id="mode" class="badge">...</span>
+<div class="dist"><span id="dist">--</span> cm</div>
+<div class="small" id="ip"></div>
+</div>
+<div class="card" id="padCard">
+<div class="pad">
+<span></span><button onclick="cmd('walk')">&#9650;</button><span></span>
+<button onclick="cmd('turnL')">&#9664;</button><button onclick="cmd('home')">&#8962;</button><button onclick="cmd('turnR')">&#9654;</button>
+<span></span><button onclick="cmd('back')">&#9660;</button><span></span>
+</div>
+<div class="row">
 <button onclick="cmd('dance')">Baile</button>
-<button onclick="cmd('beep')">Beep</button></p>
-<pre id=s></pre>
+<button onclick="cmd('beep')">Beep</button>
+</div>
+<p class="msg" id="msg"></p>
+</div>
 <script>
-async function refresh(){try{const r=await fetch('/status');const j=await r.json();document.getElementById('m').textContent=j.mode;document.getElementById('s').textContent=JSON.stringify(j,null,2);}catch(e){}setTimeout(refresh,2000);}refresh();
+let mode='exposition';
+async function refresh(){
+ try{
+  const r=await fetch('/status');const j=await r.json();mode=j.mode;
+  const mb=document.getElementById('mode');
+  mb.textContent=j.mode;mb.className='badge'+(j.mode==='manual'?' manual':'');
+  document.getElementById('dist').textContent=(j.dist<0?'--':j.dist.toFixed(1));
+  document.getElementById('ip').textContent=(j.ip||'')+(j.sim?' \u00b7 SIM sin servos':'');
+  document.getElementById('bExpo').className=j.mode==='manual'?'':'on';
+  document.getElementById('bMan').className=j.mode==='manual'?'on':'';
+  const dis=j.mode!=='manual';
+  document.querySelectorAll('#padCard button').forEach(b=>b.disabled=dis);
+ }catch(e){}
+ setTimeout(refresh,2000);
+}
+refresh();
 async function setMode(m){await fetch('/mode?m='+m);refresh();}
-async function cmd(a){await fetch('/cmd?a='+a+'&steps=2&T=1000');refresh();}
+async function cmd(a){
+ const m=document.getElementById('msg');m.textContent='';
+ try{const r=await fetch('/cmd?a='+a+'&steps=2&T=1000');
+  if(!r.ok){m.textContent='Pasa a modo Manual primero';return;}
+ }catch(e){m.textContent='Sin conexion';}
+ refresh();
+}
 </script></body></html>)HTML";
 
 static void handleRoot() { server.send(200, "text/html", HTML_PAGE); }

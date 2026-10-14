@@ -1,6 +1,6 @@
 # 12. Arquitectura y Módulos (SDD)
 
-> Base mínima estable + extras opcionales por flags. La base **nunca depende de red**.
+> WiFi + dashboard siempre presentes en `core/net`. Sin Bluetooth.
 
 ## 1. Árbol (`firmware/src/`)
 
