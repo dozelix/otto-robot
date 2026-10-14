@@ -14,7 +14,10 @@ Tambien menciono lo emocionante del prueba y error, por supuesto procurando que 
 2. Trabaja sobre una rama descriptiva (`docs/...`, `fix/...`).
 3. Mantén el español, el formato numerado `NN-nombre.md` y los enlaces relativos.
 4. Actualiza `docs/index.md` y el `README.md` si agregas un nuevo documento.
-5. Abre un *pull request* con una descripción breve.
+5. Si tocas `firmware/` o `platformio.ini`, los tests son requerimiento:
+   `python tests/run_tests.py` (53/53 OK) y, con placa o toolchain,
+   `pio test -e test_core_esp32` (o `-e native`). Todo en verde antes del PR.
+6. Abre un *pull request* con una descripción breve.
 
 ## Estilo de documentación
 
