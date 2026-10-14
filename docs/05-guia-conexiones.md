@@ -1,8 +1,9 @@
 # 05. Guía de Conexiones (ESP32-WROOM)
 
 > Placa objetivo: **ESP32-WROOM** (`esp32dev`, 3.3 V lógicos).
-> Referencia histórica Nano al final. Esquema visual (Nano):
-> [`hardware/esquemas/esquema-conexiones.svg`](../hardware/esquemas/esquema-conexiones.svg).
+> Referencia histórica Nano al final. Esquema visual ESP32 con instrucciones:
+> [`hardware/esquemas/esquema-conexiones.svg`](../hardware/esquemas/esquema-conexiones.svg)
+> ([`esquema-conexiones.md`](../hardware/esquemas/esquema-conexiones.md)).
 
 ---
 
