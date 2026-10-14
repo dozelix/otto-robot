@@ -1,23 +1,17 @@
 #pragma once
 // Otto DIY — Config base SDD (ESP32-WROOM, PlatformIO, C++).
 // Placa objetivo: ESP32-WROOM (esp32dev, Arduino framework).
-// Base compila y corre SIN red. WiFi es módulo extra (ENABLE_WIFI_MODULE).
+// Base: servos + proximidad + WiFi + dashboard, siempre presentes.
 // Política de red: SOLO WiFi 2.4 GHz. Bluetooth siempre deshabilitado.
 
 #include <stdint.h>
 
 // ---------------------------------------------------------------- Sim
-// 1 = sin servos: no hace attach, solo HC-SR04 + buzzer + log [SIM].
+// 1 = sin servos: no hace attach, solo HC-SR04 + log [SIM].
 // 0 = con servos: attach 4x SG90 + gait real.
 // Cambia en platformio.ini con -DSIM_SIN_SERVOS=0 o edita aquí.
 #ifndef SIM_SIN_SERVOS
 #define SIM_SIN_SERVOS 1
-#endif
-
-// ---------------------------------------------------------------- Módulos extra
-// 0 = base sola (por defecto). 1 = compila extra WiFi (ver modules/net_wifi).
-#ifndef ENABLE_WIFI_MODULE
-#define ENABLE_WIFI_MODULE 0
 #endif
 
 // ---------------------------------------------------------------- Servos SG90
@@ -26,7 +20,7 @@
 #define SERVO_TI 25  // Tobillo izquierdo
 #define SERVO_TD 26  // Tobillo derecho
 
-// Test 1 servo (env:test_1sg90). GPIO2 = LED onboard + strapping:
+// Test 1 servo (env:manual_1sg90). GPIO2 = LED onboard + strapping:
 // si falla el upload, desconecta S naranja durante la subida o mueve a 32.
 #define PIN_SERVO_TEST 2
 
@@ -59,5 +53,5 @@
 // Watchdog manual: si no hay comandos en este tiempo, vuelve a EXPOSITION.
 #define MANUAL_WATCHDOG_MS 30000UL
 
-// Modo por defecto al arrancar (base sin red)
+// Modo por defecto al arrancar (siempre con WiFi + dashboard)
 #define DEFAULT_MODE_EXPOSITION 1  // 1 = EXPOSITION, 0 = MANUAL

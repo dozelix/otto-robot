@@ -1,11 +1,11 @@
 #include "autonomy.h"
-#include "servo_controller.h"
-#include "sonar.h"
-#include "buzzer.h"
-#include "gait.h"
-#include "validate.h"
+#include "../motion/servo_controller.h"
+#include "../sonar/sonar.h"
+#include "../audio/sound_hook.h"
+#include "../motion/gait.h"
+#include "../validate/validate.h"
 #include <Arduino.h>
-#include "../config.h"
+#include "../../config.h"
 
 static ServoController sc;
 static OttoMode currentMode =
@@ -21,7 +21,7 @@ static int expoCycle = 0;
 
 void autonomyInit() {
   sonarBegin();
-  buzzerBegin();
+  soundBegin();
   sc.begin();
   lastManualMs = millis();
   invalidCount = 0;
@@ -30,7 +30,7 @@ void autonomyInit() {
   Serial.println("[SIM] Sin SG90: acerca la mano <20cm -> [SIM] giro + beep");
 #else
   sc.home();
-  beep(880, 120);
+  soundBeep(880, 120);
 #endif
 }
 
@@ -40,7 +40,7 @@ void setMode(OttoMode m) {
   lastManualMs = millis();
   Serial.printf("[Otto] mode -> %s\n", modeName(currentMode));
   sc.home();
-  beep(m == OttoMode::MANUAL ? 1200 : 880, 150);
+  soundBeep(m == OttoMode::MANUAL ? 1200 : 880, 150);
 }
 
 OttoMode getMode() { return currentMode; }
@@ -94,7 +94,7 @@ bool manualBeep(int freq, int ms) {
   if (!isValidBeepFreq(freq)) return false;
   if (!isValidBeepMs(ms)) return false;
   notifyManualCommand();
-  beep(freq, ms);
+  soundBeep(freq, ms);
   return true;
 }
 
@@ -119,7 +119,7 @@ void autonomyTick() {
     if (shouldSafeHome(invalidCount, MAX_LECTURAS_INVALIDAS)) {
       Serial.println("[Otto] sensor inválido xN -> SAFE_HOME + beep lento");
       sc.home();
-      beep(440, 300);
+      soundBeep(440, 300);
       invalidCount = 0;
     }
     delay(PERIODO_LECTURA_MS);
@@ -133,9 +133,9 @@ void autonomyTick() {
     Serial.println("[Otto] obstáculo -> turn + beep");
 #if SIM_SIN_SERVOS
     Serial.println("[SIM] obstáculo -> [SIM] turn + beep");
-    beepDouble();
+    soundBeepDouble();
 #else
-    beep(1200, 150);
+    soundBeep(1200, 150);
     gaitExecute(sc, turnParams(1), 2, TIEMPO_PASO_MS);
 #endif
   } else {
@@ -144,7 +144,7 @@ void autonomyTick() {
 #if SIM_SIN_SERVOS
       Serial.println("[SIM] libre -> [SIM] danceBasic");
       delay(600);
-      beep(880, 100);
+      soundBeep(880, 100);
 #else
       Serial.println("[Otto] libre -> danceBasic");
       danceBasic(sc);

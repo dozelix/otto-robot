@@ -1,6 +1,6 @@
-// Unity: modos de core/modes.h.
+// Unity: modos de core/modes.h (pio test -e test_core_esp32 / -e native).
 #include <unity.h>
-#include "../../src/core/modes.h"
+#include "../../src/core/modes/modes.h"
 
 void test_mode_values(void) {
   TEST_ASSERT_EQUAL_INT(0, (int)OttoMode::EXPOSITION);

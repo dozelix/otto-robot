@@ -6,32 +6,33 @@
 
 ```text
 src/
-├── config.h               # pines, trims, umbrales, SIM, ENABLE_WIFI_MODULE
-├── wifi_secrets.h         # SSID/PASS 2.4 GHz (solo extra WiFi)
+├── config.h               # pines, trims, umbrales, SIM (WiFi siempre en core)
+├── wifi_secrets.h         # SSID/PASS 2.4 GHz, red única (sin BT)
 ├── main.cpp               # setup: autonomyInit + wifiBegin; loop: serial + wifi + tick
-├── test_1sg90.cpp         # env de mesa (1 servo + sonar)
-├── core/                  # BASE (siempre compila)
-│   ├── modes.h            # OttoMode {EXPOSITION, MANUAL}
-│   ├── servo_controller.* # 4x SG90 / [SIM]
-│   ├── sonar.*            # mediana 5, -1 inválido
-│   ├── buzzer.*           # beep/tone
-│   ├── gait.*             # walk/turn/danceBasic senoidal
-│   └── autonomy.*         # setMode + tick + manual* + watchdog
-└── modules/               # EXTRAS (solo si flag=1)
-    └── net_wifi.*         # WiFi STA 2.4 GHz + WebServer / /status /mode /cmd
-    # futuros: ota.*, songs.*, leds.*
+├── core/                  # BASE, un subdirectorio por módulo (siempre compila)
+│   ├── modes/             # OttoMode {EXPOSITION, MANUAL}
+│   ├── validate/          # reglas puras (steps/T/dir, shouldAvoid/Watchdog…)
+│   ├── sonar/             # HC-SR04 + filtro mediana 5, -1 inválido
+│   ├── motion/            # 4x SG90 + walk/turn/danceBasic senoidal
+│   ├── autonomy/          # setMode + tick + manual* + watchdog
+│   ├── net/               # WiFi STA 2.4 GHz + dashboard / /status /mode /cmd
+│   └── audio/             # sound_hook (desacople core ↔ modules)
+├── modules/               # buzzer opcional (se registra vía sound_hook)
+└── tools/                 # banco: manual_1sg90 + calibracion_90
 ```
 
-## 2. Flags (`platformio.ini` / `config.h`)
+## 2. Flags y envs (`platformio.ini` en raíz / `config.h`)
 
-| Flag | 0 (base) | 1 (extra) |
+| Flag | 0 | 1 (defecto) |
 | --- | --- | --- |
 | `SIM_SIN_SERVOS` | Servos reales | Simula actuadores, sensor real |
-| `ENABLE_WIFI_MODULE` | Sin `WiFi/WebServer` | Panel + API de modos |
 
-Envs: `otto_esp32` (0), `otto_esp32_wifi` (1), `test_1sg90` (mesa).
+WiFi + dashboard viven en `core/net` **siempre** (sin flag). Envs:
+`otto_esp32` (producción), `otto_esp32_wifi` (alias compat.),
+`manual_1sg90` y `calibracion_90` (banco, excluyen `core/`+`modules/`),
+`test_core_esp32` (Unity en placa) y `native` (Unity en PC).
 
-## 3. Contrato base (`core/autonomy.h`)
+## 3. Contrato base (`core/autonomy/autonomy.h`)
 
 ```cpp
 void autonomyInit();
@@ -48,9 +49,9 @@ bool manualBeep(int freq, int ms);
 
 Reglas:
 
-* La base no incluye `<WiFi.h>` ni `<WebServer.h>` (solo el módulo).
-* Los extras llaman a la base; nunca al revés.
-* Si el extra falla, la base sigue en `EXPOSITION` local.
+* Solo `core/net` incluye `<WiFi.h>`/`<WebServer.h>`; el resto de `core/` no conoce la red.
+* Si WiFi no conecta, la base sigue en `EXPOSITION` local (degradación elegante).
+* El buzzer es opcional: `core/` lo usa vía `audio/sound_hook.h`, `modules/buzzer` se registra en `main.cpp`.
 * Comandos manuales validados (`steps 1..4`, `T 500..2000 ms`).
 
 ## 4. Red: WiFi único
@@ -68,7 +69,7 @@ Reglas:
 
 ## 6. Pruebas
 
-* Lógica pura testeable en `core/validate.h`, `sonar_filter.h`, `gait_params.h`, `modes.h` (sin Arduino).
+* Lógica pura testeable en `core/validate/validate.h`, `core/sonar/sonar_filter.h`, `core/motion/gait_params.h`, `core/modes/modes.h` (sin Arduino).
 * Suite host: `python tests/run_tests.py` (49 tests, stdlib). Ver [`tests/README.md`](../tests/README.md).
 * Unity en placa: `pio test -e test_core_esp32` (casos en `firmware/test/test_core/`).
 * Regla: todo módulo nuevo trae sus reglas puras + casos en ambas capas.

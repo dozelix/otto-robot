@@ -1,9 +1,8 @@
 """Modos EXPOSITION/MANUAL: contrato de modes.h + spec ejecutable."""
-import os
 import re
 import unittest
 
-from helpers import CORE, read
+from helpers import AUTONOMY_H, MODES_H, read
 
 
 def mode_from_string(s):
@@ -22,8 +21,8 @@ def mode_name(m):
 class TestModes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.h = read(os.path.join(CORE, "modes.h"))
-        cls.autonomy_h = read(os.path.join(CORE, "autonomy.h"))
+        cls.h = read(MODES_H)
+        cls.autonomy_h = read(AUTONOMY_H)
 
     def test_header_puro_sin_arduino(self):
         self.assertNotIn("Arduino.h", self.h)

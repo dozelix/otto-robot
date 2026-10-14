@@ -1,6 +1,6 @@
 #include "servo_controller.h"
 #include <ESP32Servo.h>
-#include "../config.h"
+#include "../../config.h"
 
 static Servo sCI, sCD, sTI, sTD;
 

@@ -1,6 +1,6 @@
-// Unity: parámetros de core/gait_params.h.
+// Unity: parámetros de core/gait_params.h (pio test -e test_core_esp32 / -e native).
 #include <unity.h>
-#include "../../src/core/gait_params.h"
+#include "../../src/core/motion/gait_params.h"
 
 void test_walk_fases(void) {
   GaitParams f = walkParams(1);

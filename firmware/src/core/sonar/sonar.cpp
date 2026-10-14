@@ -1,7 +1,7 @@
 #include "sonar.h"
 #include "sonar_filter.h"
 #include <Arduino.h>
-#include "../config.h"
+#include "../../config.h"
 
 #if FILTRO_MUESTRAS != 5
 #error "sonarFilterCm() es mediana de 5: ajusta FILTRO_MUESTRAS o el filtro"

@@ -1,8 +1,7 @@
 """Reglas de validate.h: spec ejecutable + verifica que autonomy las usa."""
-import os
 import unittest
 
-from helpers import CORE, read
+from helpers import AUTONOMY_CPP, VALIDATE_H, read
 
 MASK32 = 0xFFFFFFFF
 
@@ -47,8 +46,8 @@ def clamp_angle(a):
 class TestValidate(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.h = read(os.path.join(CORE, "validate.h"))
-        cls.cpp = read(os.path.join(CORE, "autonomy.cpp"))
+        cls.h = read(VALIDATE_H)
+        cls.cpp = read(AUTONOMY_CPP)
 
     def test_header_puro(self):
         self.assertNotIn("Arduino.h", self.h)

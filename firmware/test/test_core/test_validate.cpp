@@ -1,6 +1,6 @@
-// Unity: reglas de core/validate.h (corre en placa con `pio test -e test_core_esp32`).
+// Unity: reglas de core/validate.h (pio test -e test_core_esp32 / -e native).
 #include <unity.h>
-#include "../../src/core/validate.h"
+#include "../../src/core/validate/validate.h"
 
 void test_steps_bounds(void) {
   TEST_ASSERT_FALSE(isValidSteps(0, 4));

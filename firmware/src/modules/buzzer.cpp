@@ -7,7 +7,7 @@ void buzzerBegin() {
   digitalWrite(PIN_BUZZER, LOW);
 }
 
-void beep(int freq, int ms) {
+void buzzBeep(int freq, int ms) {
 #if defined(ESP32)
   tone(PIN_BUZZER, freq, ms);
   delay(ms + 20);
@@ -19,8 +19,8 @@ void beep(int freq, int ms) {
 #endif
 }
 
-void beepDouble(int freq, int ms, int gap) {
-  beep(freq, ms);
+void buzzBeepDouble(int freq, int ms, int gap) {
+  buzzBeep(freq, ms);
   delay(gap);
-  beep(freq, ms);
+  buzzBeep(freq, ms);
 }

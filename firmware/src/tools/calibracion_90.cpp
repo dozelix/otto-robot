@@ -1,10 +1,10 @@
-// Calibración 90° para cuando lleguen los SG90.
-// Uso: renombra este archivo a main.cpp (guarda el autonomo antes) y sube.
+// Calibración 90° para cuando lleguen los SG90 (herramienta, no test).
+// Env PlatformIO: calibracion_90 (platformio.ini en raíz, usa build_src_filter).
 // Deja los 4 servos a 90° para montar horns/patas mecánicamente.
 // Requiere: ESP32Servo (ya en platformio.ini) + fuente externa 5V si hay jitter.
 #include <Arduino.h>
 #include <ESP32Servo.h>
-#include "config.h"
+#include "../config.h"
 
 Servo sCI, sCD, sTI, sTD;
 

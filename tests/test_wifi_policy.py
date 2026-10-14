@@ -1,18 +1,25 @@
-"""Política WiFi único: sin BT/BLE/AP, una sola red, endpoints y 409."""
-import os
+"""Política WiFi único: core/net siempre presente, sin BT/BLE/AP."""
 import re
 import unittest
 
-from helpers import MODULES, SRC, read
+from helpers import CONFIG_H, NET_WIFI_CPP, NET_WIFI_H, WIFI_SECRETS_H, read
 
 
 class TestWifiPolicy(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.cpp = read(os.path.join(MODULES, "net_wifi.cpp"))
-        cls.h = read(os.path.join(MODULES, "net_wifi.h"))
-        cls.secrets = read(os.path.join(SRC, "wifi_secrets.h"))
-        cls.cfg = read(os.path.join(SRC, "config.h"))
+        cls.cpp = read(NET_WIFI_CPP)
+        cls.h = read(NET_WIFI_H)
+        cls.secrets = read(WIFI_SECRETS_H)
+        cls.cfg = read(CONFIG_H)
+
+    def test_net_vive_en_core(self):
+        self.assertIn("core/net", NET_WIFI_CPP.replace("\\", "/"))
+        self.assertIn("SIEMPRE presente", self.h)
+
+    def test_sin_flag_condicional(self):
+        self.assertNotIn("ENABLE_WIFI_MODULE", self.cpp)
+        self.assertNotIn("ENABLE_WIFI_MODULE", self.cfg)
 
     def test_bt_deshabilitado(self):
         self.assertIn("esp_bt_controller_mem_release", self.cpp)
@@ -39,11 +46,6 @@ class TestWifiPolicy(unittest.TestCase):
     def test_manual_gated_409(self):
         self.assertIn("send(409", self.cpp)
         self.assertIn("OttoMode::MANUAL", self.cpp)
-
-    def test_base_sin_red_por_defecto(self):
-        self.assertIn("ENABLE_WIFI_MODULE", self.cfg)
-        self.assertIn("stubs sin dependencias de red", self.cpp)
-        self.assertIn("desactivado", self.cpp)
 
 
 if __name__ == "__main__":

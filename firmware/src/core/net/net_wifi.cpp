@@ -1,14 +1,12 @@
 #include "net_wifi.h"
-#include "../config.h"
-
-#if ENABLE_WIFI_MODULE
+#include "../../config.h"
 
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include "../core/autonomy.h"
-#include "../core/modes.h"
-#include "../wifi_secrets.h"
+#include "../autonomy/autonomy.h"
+#include "../modes/modes.h"
+#include "../../wifi_secrets.h"
 #include "esp_bt.h"
 
 static WebServer server(80);
@@ -135,13 +133,3 @@ void wifiHandle() {
 
 bool wifiConnected() { return WiFi.status() == WL_CONNECTED; }
 const char* wifiIP() { return ipStr.c_str(); }
-
-#else  // ENABLE_WIFI_MODULE == 0: stubs sin dependencias de red
-
-#include <Arduino.h>
-void wifiBegin() { Serial.println("[WiFi] módulo desactivado (base sin red)"); }
-void wifiHandle() {}
-bool wifiConnected() { return false; }
-const char* wifiIP() { return ""; }
-
-#endif

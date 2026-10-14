@@ -1,6 +1,6 @@
-// Unity: filtro de core/sonar_filter.h (vectores con margen float32).
+// Unity: filtro de core/sonar_filter.h (pio test -e test_core_esp32 / -e native).
 #include <unity.h>
-#include "../../src/core/sonar_filter.h"
+#include "../../src/core/sonar/sonar_filter.h"
 
 void test_timeout_es_invalido(void) {
   TEST_ASSERT_FLOAT_WITHIN(0.001f, -1.0f, sonarCmFromUs(0));

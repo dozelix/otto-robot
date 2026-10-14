@@ -1,6 +1,7 @@
 #pragma once
-// Módulo EXTRA net_wifi: solo WiFi STA 2.4 GHz. Bluetooth deshabilitado.
-// La base funciona sin este módulo (ENABLE_WIFI_MODULE=0).
+// CORE net_wifi: WiFi STA 2.4 GHz + dashboard, SIEMPRE presente.
+// El robot siempre arranca con WiFi (independiente de servos/sonar).
+// Bluetooth siempre deshabilitado (comparten 2.4 GHz).
 // Endpoints:
 //   GET /              -> panel (modo + pad manual)
 //   GET /status        -> JSON {mode, dist, sim}

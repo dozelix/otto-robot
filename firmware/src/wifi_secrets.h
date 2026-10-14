@@ -4,7 +4,7 @@
 // Este archivo queda versionado con placeholders; para producción usa
 // variables de entorno o un archivo local no commiteado.
 
-#define WIFI_SSID "OTTO_2G"
-#define WIFI_PASS "cambia_esta_clave"
+#define WIFI_SSID "OTTO"
+#define WIFI_PASS "Inacap26."
 #define WIFI_TIMEOUT_MS 10000
 #define WIFI_HOSTNAME "otto-bot"

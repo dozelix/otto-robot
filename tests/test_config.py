@@ -8,11 +8,13 @@ from helpers import SRC, read, parse_int_defines
 class TestConfig(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.cfg = parse_int_defines(read(os.path.join(SRC, "config.h")))
+        cls.raw = read(os.path.join(SRC, "config.h"))
+        cls.cfg = parse_int_defines(cls.raw)
 
     def test_flags_base(self):
         self.assertEqual(self.cfg["SIM_SIN_SERVOS"], 1)
-        self.assertEqual(self.cfg["ENABLE_WIFI_MODULE"], 0)
+        # WiFi siempre presente en core: sin flag condicional.
+        self.assertNotIn("ENABLE_WIFI_MODULE", self.raw)
 
     def test_pines_unicos(self):
         pins = {k: self.cfg[k] for k in

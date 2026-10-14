@@ -1,7 +1,7 @@
 #include "gait.h"
 #include "servo_controller.h"
 #include <Arduino.h>
-#include "../config.h"
+#include "../../config.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

@@ -3,10 +3,9 @@
 Nota float32: el firmware trunca en float32 y aquí se calcula en float64.
 Los asserts usan márgenes (no igualdades exactas en bordes).
 """
-import os
 import unittest
 
-from helpers import CORE, read
+from helpers import SONAR_CPP, SONAR_FILTER_H, read
 
 
 def cm_from_us(us):
@@ -34,8 +33,8 @@ def filter_cm(samples):
 class TestSonarFilter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.h = read(os.path.join(CORE, "sonar_filter.h"))
-        cls.cpp = read(os.path.join(CORE, "sonar.cpp"))
+        cls.h = read(SONAR_FILTER_H)
+        cls.cpp = read(SONAR_CPP)
 
     def test_header_puro_y_api(self):
         self.assertNotIn("Arduino.h", self.h)

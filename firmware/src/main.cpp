@@ -1,11 +1,13 @@
 // Otto DIY — Firmware base SDD (ESP32-WROOM, PlatformIO, C++).
-// Base: movimiento (walk/turn/dance/home) + proximidad HC-SR04.
-// Extras (módulos): WiFi único 2.4 GHz para modos exposición/manual.
+// Base: servos + proximidad HC-SR04 + WiFi + dashboard (siempre).
+// Buzzer: módulo opcional (modules/), registrado vía sound_hook.
 //
-// Envs:
-//   otto_esp32      -> base sin red (ENABLE_WIFI_MODULE=0)
-//   otto_esp32_wifi -> base + panel WiFi (ENABLE_WIFI_MODULE=1)
-//   test_1sg90      -> 1 servo + sonar (mesa)
+// Envs (platformio.ini en raíz del repo):
+//   otto_esp32      -> firmware producción
+//   manual_1sg90    -> banco 1 servo + sonar (mesa)
+//   calibracion_90  -> lleva 4 servos a 90°
+//   test_core_esp32 -> Unity en placa
+//   native          -> Unity en PC
 //
 // Serial 115200:
 //   exposition: "dist: X cm" + [Otto]/[SIM]
@@ -13,9 +15,11 @@
 
 #include <Arduino.h>
 #include "config.h"
-#include "core/autonomy.h"
-#include "core/modes.h"
-#include "modules/net_wifi.h"
+#include "core/autonomy/autonomy.h"
+#include "core/modes/modes.h"
+#include "core/net/net_wifi.h"
+#include "core/audio/sound_hook.h"
+#include "modules/buzzer.h"
 
 static void printAyuda() {
   Serial.println("Serie: w=adelante s=atrás a=izq d=der h=home b=baile");
@@ -51,9 +55,10 @@ void setup() {
   Serial.begin(115200);
   delay(300);
   Serial.println("\n[Otto-ESP32] Firmware base SDD v0.1");
-  Serial.printf("[Otto] SIM=%d WIFI_MODULE=%d\n", SIM_SIN_SERVOS, ENABLE_WIFI_MODULE);
+  Serial.printf("[Otto] SIM=%d WIFI=always-on\n", SIM_SIN_SERVOS);
+  setSoundHooks(buzzerBegin, buzzBeep, buzzBeepDouble);
   autonomyInit();
-  wifiBegin();  // no-op si ENABLE_WIFI_MODULE=0
+  wifiBegin();
   if (wifiConnected()) Serial.printf("[Otto] Panel: http://%s/\n", wifiIP());
   printAyuda();
 }

@@ -55,13 +55,15 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 │       ├── esquema-conexiones.md
 │       └── esquema-conexiones.svg
 ├── firmware/
-│   ├── platformio.ini            # otto_esp32 / otto_esp32_wifi / test_1sg90 / test_core_esp32
-│   ├── test/test_core/           # Unity en placa (headers puros)
+│   ├── test/test_core/           # Unity en placa + PC (headers puros)
 │   └── src/
-│       ├── config.h / wifi_secrets.h / main.cpp / test_1sg90.cpp
-│       ├── core/                 # base: servo, sonar(+filter), buzzer, gait(+params), autonomy, modes, validate
-│       └── modules/              # extras: net_wifi (solo WiFi 2.4 GHz, sin BT)
-├── tests/                        # suite Python: python tests/run_tests.py (49 tests)
+│       ├── config.h / wifi_secrets.h / main.cpp
+│       ├── core/                 # un subdirectorio por módulo
+│       │   ├── modes/ autonomy/ validate/ sonar/ motion/ net/ audio/
+│       ├── modules/              # buzzer (opcional vía sound_hook)
+│       └── tools/                # manual_1sg90 + calibracion_90 (banco)
+├── platformio.ini                # envs en raíz (src_dir/test_dir); build_src_filter vigente
+├── tests/                        # suite Python: python tests/run_tests.py (52 tests)
 └── docs/
     ├── index.md
     ├── 01-ficha-tecnica.md

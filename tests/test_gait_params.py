@@ -3,7 +3,8 @@ import os
 import re
 import unittest
 
-from helpers import CORE, REPO_ROOT, read
+from helpers import (AUTONOMY_CPP, GAIT_CPP, GAIT_H, GAIT_PARAMS_H,
+                     REPO_ROOT, VALIDATE_H, read)
 
 
 def walk_params(d):
@@ -29,9 +30,9 @@ def angle_range(g):
 class TestGaitParams(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.h = read(os.path.join(CORE, "gait_params.h"))
-        cls.gait_h = read(os.path.join(CORE, "gait.h"))
-        cls.gait_cpp = read(os.path.join(CORE, "gait.cpp"))
+        cls.h = read(GAIT_PARAMS_H)
+        cls.gait_h = read(GAIT_H)
+        cls.gait_cpp = read(GAIT_CPP)
 
     def test_fuente_unica(self):
         self.assertIn("GaitParams", self.h)

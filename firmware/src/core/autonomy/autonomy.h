@@ -1,8 +1,9 @@
 #pragma once
 // Máquina de estados base + modos EXPOSITION/MANUAL.
-// Sin dependencias de red: el módulo WiFi solo llama a setMode()/manual*().
+// core/net/net_wifi (siempre presente) solo llama a setMode()/manual*().
+// Sonido opcional vía core/audio/sound_hook.h (modules/buzzer se registra).
 
-#include "modes.h"
+#include "../modes/modes.h"
 
 void autonomyInit();
 void autonomyTick();

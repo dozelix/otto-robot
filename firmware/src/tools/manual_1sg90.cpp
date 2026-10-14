@@ -1,5 +1,5 @@
-// Test con 1 solo SG90 + HC-SR04 en ESP32-WROOM.
-// Env PlatformIO: test_1sg90 (ver platformio.ini, usa src_filter).
+// Banco manual con 1 solo SG90 + HC-SR04 en ESP32-WROOM (herramienta, no test).
+// Env PlatformIO: manual_1sg90 (platformio.ini en raíz, usa build_src_filter).
 //
 // CABLEADO SEGURO (importante):
 //   Marrón (GND servo) -> GND ESP32 Y GND fuente externa (GND común obligatorio)
@@ -17,7 +17,7 @@
 //     'c' = centro 90, 's' = barrido demo una vez.
 #include <Arduino.h>
 #include <ESP32Servo.h>
-#include "config.h"
+#include "../config.h"
 
 Servo sTest;
 
