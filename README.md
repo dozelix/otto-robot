@@ -12,14 +12,14 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 2. [Planos STL](docs/02-planos-stl.md) — Body V9 69×69×39 mm (multi-pieza en único archivo) y parámetros recomendados.
 3. [Lista de Materiales (BOM)](docs/03-lista-materiales-bom.md) — Electrónica y tornillería.
 4. [Ficha Descriptiva](docs/04-ficha-descriptiva.md) — Cómo, cuándo, por qué y dónde del proyecto.
-5. [Guía de Conexiones](docs/05-guia-conexiones.md) — Mapeo de pines Nano; ESP32 en [Migración ESP32](docs/11-migracion-esp32.md).
+5. [Guía de Conexiones](docs/05-guia-conexiones.md) — Orden de conexión, servos SG90 y alimentación (ESP32).
 
 ### Software y puesta en marcha
 
 6. [Librerías y Entorno](docs/06-librerias.md) — PlatformIO + `ESP32Servo`, política WiFi único.
 7. [Código de Calibración](docs/07-codigo-calibracion.md) — Centrado de servos a 90°.
 8. [Firmware Autónomo](docs/08-firmware-autonomo.md) — Base SDD + modos exposición/manual.
-9. [Manual de Ensamblaje](docs/09-manual-ensamblaje.md) — *Pendiente:* montaje mecánico paso a paso (texto).
+9. [Manual de Ensamblaje](docs/09-manual-ensamblaje.md) — Montaje progresivo en 9 etapas.
 10. [Calibración y Troubleshooting](docs/10-calibracion-troubleshooting.md) — *Pendiente:* trimming y solución de problemas.
 11. [Migración ESP32](docs/11-migracion-esp32.md) — Cableado actual, divisor Echo, orden de encendido.
 12. [Arquitectura y Módulos](docs/12-arquitectura-modulos.md) — Árbol por directorios y reglas.
@@ -31,7 +31,8 @@ Documentación completa en [`docs/index.md`](docs/index.md).
 | Ficha técnica, planos, BOM, ficha descriptiva | Completado |
 | Conexiones, librerías, calibración, migración ESP32, arquitectura | Completado |
 | Firmware autónomo (base + modos) | En progreso |
-| Ensamblaje, troubleshooting | Pendiente |
+| Ensamblaje | Completado |
+| Troubleshooting | Pendiente |
 
 ## Inicio rápido (ESP32 + PlatformIO)
 
